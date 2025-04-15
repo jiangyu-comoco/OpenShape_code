@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extracted Openshape Embedding</title>
+    <style>
+        .copy-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        #featureVector {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            max-width: 600px;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background-color: #45a049;
+        }
+        .copy-message {
+            color: green;
+            margin-left: 10px;
+            display: none;
+        }
+
+        /* Add these styles */
+        .copy-section {
+            position: relative;
+        }
+        .full-vector {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add hidden element with full vector -->
+    <div class="full-vector" id="fullVector">{{ full_vector }}</div>
+
+    <h1>Extracted Openshape Embedding</h1>
+    <div class="copy-section">
+        <pre id="featureVector">{{ display_vector }}</pre>
+        <button class="copy-btn" onclick="copyToClipboard()">Copy Full Vector</button>
+        <span id="copyMessage" class="copy-message">Copied!</span>
+    </div>
+
+    <div style="margin-top: 60px;">
+        <a href="/">Upload another GLB file</a>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            // Copy from the hidden full vector element
+            const fullVector = document.getElementById('fullVector').textContent;
+            navigator.clipboard.writeText(fullVector).then(() => {
+                const message = document.getElementById('copyMessage');
+                message.style.display = 'inline';
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+    </script>
+</body>
+</html>
