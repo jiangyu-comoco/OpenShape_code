@@ -182,7 +182,7 @@ def init_openshape_model():
     return model, config
 
 def main():
-    glb_path = "/data/git/OpenShape_code/demo/man.glb"
+    glb_path = "./demo/man.glb"
     ply_path = glb_path + ".ply"
     
     convert_glb_to_ply(glb_path, ply_path)
