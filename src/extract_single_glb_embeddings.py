@@ -27,28 +27,53 @@ def ensure_directory_exists(directory_path):
     """
     if not os.path.exists(directory_path):
         os.makedirs(directory_path, exist_ok=True)
-        
+
 def convert_glb_to_ply(glb_path : str,
                        ply_path : str, 
                        least_vertex_num = 10000):
     ms = pymeshlab.MeshSet()
     ms.load_new_mesh(glb_path)
     
+    for mesh_idx in range(ms.mesh_number()):
+        mesh = ms.mesh(mesh_idx)
+        
+        if not mesh.has_vertex_color() and mesh.texture_number() > 0:
+            ms.transfer_texture_to_color_per_vertex(sourcemesh=mesh_idx, targetmesh=mesh_idx)
+    
     if ms.mesh_number() > 1:
-        ms.generate_by_merging_visible_meshes(mergevisible=False)
+        ms.generate_by_merging_visible_meshes(mergevisible=True)
         
     assert ms.mesh_number() == 1
     
     while ms.current_mesh().vertex_number() < least_vertex_num:
         ms.apply_filter("meshing_surface_subdivision_catmull_clark")
-        
-    if not ms.current_mesh().has_vertex_color() and ms.current_mesh().texture_number() > 0:
-        ms.transfer_texture_to_color_per_vertex()
     
     ms.save_current_mesh(ply_path, save_vertex_color=True, binary=False,
                          save_textures=False, save_wedge_texcoord=False, save_vertex_coord=False, 
                          save_vertex_quality=False, save_vertex_radius=False, save_face_quality=False,
                          save_wedge_color=False, save_wedge_normal=False)
+                           
+# def convert_glb_to_ply(glb_path : str,
+#                        ply_path : str, 
+#                        least_vertex_num = 10000):
+#     ms = pymeshlab.MeshSet()
+#     ms.load_new_mesh(glb_path)
+    
+#     if ms.mesh_number() > 1:
+#         ms.generate_by_merging_visible_meshes(mergevisible=False)
+        
+#     assert ms.mesh_number() == 1
+    
+#     while ms.current_mesh().vertex_number() < least_vertex_num:
+#         ms.apply_filter("meshing_surface_subdivision_catmull_clark")
+        
+#     if not ms.current_mesh().has_vertex_color() and ms.current_mesh().texture_number() > 0:
+#         ms.transfer_texture_to_color_per_vertex()
+    
+#     ms.save_current_mesh(ply_path, save_vertex_color=True, binary=False,
+#                          save_textures=False, save_wedge_texcoord=False, save_vertex_coord=False, 
+#                          save_vertex_quality=False, save_vertex_radius=False, save_face_quality=False,
+#                          save_wedge_color=False, save_wedge_normal=False)
         
 def convert_glb_to_ply_mix(glb_path : str,
                            ply_path : str, 
