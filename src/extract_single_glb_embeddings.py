@@ -41,12 +41,14 @@ def convert_glb_to_ply(glb_path : str,
             ms.transfer_texture_to_color_per_vertex(sourcemesh=mesh_idx, targetmesh=mesh_idx)
     
     if ms.mesh_number() > 1:
-        ms.generate_by_merging_visible_meshes(mergevisible=True)
+        ms.generate_by_merging_visible_meshes(mergevisible=False)
         
     assert ms.mesh_number() == 1
     
     while ms.current_mesh().vertex_number() < least_vertex_num:
-        ms.apply_filter("meshing_surface_subdivision_catmull_clark")
+        ms.meshing_repair_non_manifold_edges()
+        ms.meshing_surface_subdivision_midpoint(iterations = 1)
+        #ms.apply_filter("meshing_surface_subdivision_catmull_clark")
     
     ms.save_current_mesh(ply_path, save_vertex_color=True, binary=False,
                          save_textures=False, save_wedge_texcoord=False, save_vertex_coord=False, 
